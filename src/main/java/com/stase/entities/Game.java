@@ -21,7 +21,7 @@ public class Game {
 
     public Game() {
     }
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="library_game",
             joinColumns = @JoinColumn(name="game_id"),

@@ -13,6 +13,6 @@ public class LibrairyEntry {
     @OneToOne(mappedBy = "user")
     private User user;
 
-    @ManyToMany(mappedBy="librairies")
+    @ManyToMany(mappedBy="libraries",fetch = FetchType.LAZY)
     private List<Game> games = new ArrayList<>();
 }
