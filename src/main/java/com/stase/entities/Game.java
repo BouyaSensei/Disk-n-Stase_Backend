@@ -3,6 +3,7 @@ package com.stase.entities;
 import jakarta.persistence.*;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,17 @@ public class Game {
 
     public Game() {
     }
-    public Game(String title, Text description, String genre, Boolean isPhysical, List<String> languages, String coverImageUrl) {
+    @ManyToMany
+    @JoinTable(
+            name="library_game",
+            joinColumns = @JoinColumn(name="game_id"),
+            inverseJoinColumns = @JoinColumn(name="librairy_id")
+    )
+    private final List<LibrairyEntry> libraries = new ArrayList<>();
+
+    public Game(String title, Text description, String genre, Boolean isPhysical, List<String> languages,
+
+                String coverImageUrl) {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -36,7 +47,7 @@ public class Game {
         return title;
     }
     public void setTitle(String title) {
-        this.title = title;
+         this.title = title;
     }
     public Text getDescription() {
         return description;
@@ -48,7 +59,7 @@ public class Game {
         return genre;
     }
     public void setGenre(String genre) {
-
+         this.genre = genre;
     }
     public Boolean getIsPhysical() {
         return isPhysical;
@@ -61,5 +72,17 @@ public class Game {
     }
     public void setLanguages(List<String> languages) {
         this.languages = languages;
+
+    }
+    public List<LibrairyEntry>getLibrairy(){
+        return libraries;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
     }
 }
