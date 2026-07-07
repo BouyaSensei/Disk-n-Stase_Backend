@@ -7,6 +7,9 @@ import java.util.List;
 
 @Entity
 public class LibrairyEntry {
+    public LibrairyEntry(){
+
+    }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

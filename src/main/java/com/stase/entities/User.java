@@ -13,6 +13,7 @@ public class User {
     private String password;
     @Column(nullable = false)
     private String email;
+    public User(){};
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
