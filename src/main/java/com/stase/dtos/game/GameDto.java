@@ -1,5 +1,5 @@
 package com.stase.dtos.game;
 
-public record GameDto(String title, String description, String genre, Boolean isPhysical) {
+public record GameDto(Long id, String title, String description, String genre, Boolean isPhysical) {
 
 }
