@@ -17,5 +17,6 @@ public class GameService {
     private GameDto convertToDto(Game game) {
         return new GameDto(game.getId(), game.getTitle(), game.getDescription(), game.getGenre(), game.getIsPhysical());
     }
-
+    // faire la logique de fetching içi et créé un compoentn pour faire la couche de
+    // creation de http pour garder la logique metier clean
 }
