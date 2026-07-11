@@ -1,6 +1,12 @@
 spring:
   application:
     name: stase
+
+  external-api:
+    igdb-url: "test"
+    rawg-url: ""
+    steam-url: ""
+
   datasource:
     url: jdbc:postgresql://localhost:5432/stase
     username: postgres

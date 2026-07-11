@@ -1,5 +1,5 @@
 package com.stase.dtos.librairy;
 
-public record LibrairyDto() {
+public record LibrairyDto(Long id) {
 
 }
