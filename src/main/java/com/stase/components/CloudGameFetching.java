@@ -9,19 +9,19 @@ import jakarta.annotation.PostConstruct;
 @Component
 
 public class CloudGameFetching {
-    private String igdbUrl;
+    private String rawgApi;
 
-    public void setIgdbUrl(String igdbUrl) {
-        this.igdbUrl = igdbUrl;
+    public void setRawgApi(String rawgApi) {
+        this.rawgApi = rawgApi;
     }
 
-    public String getIgdbUrl() {
-        return igdbUrl;
+    public String getRawgApi() {
+        return rawgApi;
     }
 
     @PostConstruct
     public void debug() {
-        System.out.println(igdbUrl);
+        System.out.println(rawgApi);
 
     }
 

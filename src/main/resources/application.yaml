@@ -3,9 +3,9 @@ spring:
     name: stase
 
   external-api:
-    igdb-url: "test"
-    rawg-url: ""
-    steam-url: ""
+    igdb-api: "test"
+    rawg-api: "28613bab46d54ef89b1b572c43d6b0ed"
+    steam-api: ""
 
   datasource:
     url: jdbc:postgresql://localhost:5432/stase
