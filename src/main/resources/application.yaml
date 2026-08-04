@@ -3,8 +3,11 @@ spring:
     name: stase
 
   external-api:
-    igdb-api: "test"
+    igdb-api: "https://api.igdb.com/v4/games"
+    igdb-secret: "apd52sehy7ug7ctcm1g44svggqcmn0"
+    igdb-id: "tpk7gintwrv8cuau622qzkaywlf8ep"
     rawg-api: "28613bab46d54ef89b1b572c43d6b0ed"
+    rawg-url: "https://api.rawg.io/api"
     steam-api: ""
 
   datasource:
