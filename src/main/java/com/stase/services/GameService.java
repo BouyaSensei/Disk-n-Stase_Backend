@@ -14,7 +14,7 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
-    private GameRawgDto convertToDto(Game game) {
+    public GameRawgDto convertToDto(Game game) {
         return new GameRawgDto(game.getId(), game.getName(), game.getDescription(), game.getGenre(),
                 game.getIsPhysical());
     }
