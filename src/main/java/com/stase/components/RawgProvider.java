@@ -2,10 +2,8 @@ package com.stase.components;
 
 import java.util.List;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
 import com.stase.dtos.game.GameRawgDto;
@@ -26,18 +24,7 @@ public class RawgProvider implements GameProvider {
 
     @Override
     public List<GameRawgDto> fetchAllGames() {
-        // On construit l'URL dynamiquement ICI, au moment de l'appel
-        String url = UriComponentsBuilder.fromHttpUrl(config.getRawgUrl())
-                .path("/games")
-                .queryParam("key", config.getRawgApiKey())
-                .queryParam("count", 10)S
-                .toUriString();
-
-        return restClient.get()
-                .uri(url)
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<GameDto>>() {
-                });
+        // faire la function fetch en se basant sur le DTO et l'api rawg
     }
 
     @Override
