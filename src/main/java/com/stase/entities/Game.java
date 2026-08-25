@@ -24,9 +24,9 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
-    private String title;
+    private String name;
     private String description;
-    private String genre;
+    private List<String> genre;
     private Boolean isPhysical;
     @ElementCollection // Indispensable pour une liste de types simples (String, Integer, etc.)
     @CollectionTable(name = "game_languages", joinColumns = @JoinColumn(name = "game_id"))
@@ -41,10 +41,10 @@ public class Game {
     @JoinTable(name = "library_game", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "librairy_id"))
     private final List<LibrairyEntry> libraries = new ArrayList<>();
 
-    public Game(String title, String description, String genre, Boolean isPhysical, List<String> languages,
+    public Game(String name, String description, List<String> genre, Boolean isPhysical, List<String> languages,
 
             String coverImageUrl) {
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.genre = genre;
         this.isPhysical = isPhysical;
@@ -57,12 +57,12 @@ public class Game {
         return id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -73,11 +73,11 @@ public class Game {
         this.description = description;
     }
 
-    public String getGenre() {
+    public List<String> getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(List<String> genre) {
         this.genre = genre;
     }
 

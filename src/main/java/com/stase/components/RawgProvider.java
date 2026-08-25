@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
-import com.stase.dtos.game.GameDto;
+import com.stase.dtos.game.GameRawgDto;
 
 import jakarta.annotation.PostConstruct;
 
@@ -25,12 +25,12 @@ public class RawgProvider implements GameProvider {
     }
 
     @Override
-    public List<GameDto> fetchAllGames() {
+    public List<GameRawgDto> fetchAllGames() {
         // On construit l'URL dynamiquement ICI, au moment de l'appel
         String url = UriComponentsBuilder.fromHttpUrl(config.getRawgUrl())
                 .path("/games")
                 .queryParam("key", config.getRawgApiKey())
-                .queryParam("count", 10)
+                .queryParam("count", 10)S
                 .toUriString();
 
         return restClient.get()

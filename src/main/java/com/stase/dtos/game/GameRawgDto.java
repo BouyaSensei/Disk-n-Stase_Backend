@@ -1,7 +1,7 @@
 package com.stase.dtos.game;
 
-import java.sql.Array;
+import java.util.List;
 
-public record GameRawgDto(Long id, String name, String description, Array genre, Boolean isPhysical) {
+public record GameRawgDto(Long id, String name, String description, List<String> genre, Boolean isPhysical) {
 
 }

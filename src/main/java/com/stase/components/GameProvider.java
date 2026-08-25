@@ -2,10 +2,10 @@ package com.stase.components;
 
 import java.util.List;
 
-import com.stase.dtos.game.GameDto;
+import com.stase.dtos.game.GameRawgDto;
 
 public interface GameProvider {
-    List<GameDto> fetchAllGames();
+    List<GameRawgDto> fetchAllGames();
 
     boolean supports();
 
