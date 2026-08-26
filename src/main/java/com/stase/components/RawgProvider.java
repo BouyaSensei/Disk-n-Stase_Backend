@@ -8,6 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
+import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.dtos.response.RawgResponse;
 
@@ -44,6 +45,14 @@ public class RawgProvider implements GameProvider {
         RawgResponse response = restClient.get().uri(urlCleaner).retrieve().body(RawgResponse.class);
         List<ListGameRawgDto> games = response.results();
         return games != null ? games : List.of();
+    }
+
+    @Override
+    GameRawgDto gameDetail(Long id) {
+        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games").queryParam("key",
+                config.getRawgApiKey()).queryParam("id", id).encode().build().toString();
+        RawgResponse response = restClient.get().uri(urlCleaner).retrieve().body(RawgResponse.class);
+
     }
 
     public String uriTest() {
