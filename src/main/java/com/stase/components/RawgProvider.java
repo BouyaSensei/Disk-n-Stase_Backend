@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
-import com.stase.dtos.game.GameRawgDto;
+import com.stase.dtos.game.ListGameRawgDto;
 import com.stase.dtos.response.RawgResponse;
 
 import jakarta.annotation.PostConstruct;
@@ -26,7 +26,7 @@ public class RawgProvider implements GameProvider {
     }
 
     @Override
-    public List<GameRawgDto> fetchAllGames() {
+    public List<ListGameRawgDto> fetchAllGames() {
         // faire la function fetch en se basant sur le DTO et l'api rawg
         /*
          * GameRawgDto games = restClient.get().uri(uri ->
@@ -42,7 +42,7 @@ public class RawgProvider implements GameProvider {
                 config.getRawgApiKey()).encode().build().toUri();
 
         RawgResponse response = restClient.get().uri(urlCleaner).retrieve().body(RawgResponse.class);
-        List<GameRawgDto> games = response.results();
+        List<ListGameRawgDto> games = response.results();
         return games != null ? games : List.of();
     }
 
