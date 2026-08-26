@@ -47,7 +47,7 @@ public class RawgProvider implements GameProvider {
     }
 
     public String uriTest() {
-        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl()).queryParam("key",
+        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games").queryParam("key",
                 config.getRawgApiKey()).encode().build().toString();
         return urlCleaner;
     };

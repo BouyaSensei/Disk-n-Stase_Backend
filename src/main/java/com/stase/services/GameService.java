@@ -2,8 +2,6 @@ package com.stase.services;
 
 import org.springframework.stereotype.Service;
 
-import com.stase.dtos.game.GameRawgDto;
-import com.stase.entities.Game;
 import com.stase.repositories.GameRepository;
 
 @Service
@@ -14,10 +12,13 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
-    public GameRawgDto convertToDto(Game game) {
-        return new GameRawgDto(game.getId(), game.getName(), game.getDescription(), game.getGenre(),
-                game.getIsPhysical());
-    }
+    /*
+     * public GameRawgDto convertToDto(Game game) {
+     * return new GameRawgDto(game.getId(), game.getName(), game.getDescription(),
+     * game.getGenre(),
+     * game.getIsPhysical());
+     * }
+     */
     // faire la logique de fetching içi et créé un compoentn pour faire la couche de
     // creation de http pour garder la logique metier clean
 }
