@@ -2,7 +2,7 @@ package com.stase.dtos.response;
 
 import java.util.List;
 
-import com.stase.dtos.game.ListGameRawgDto;
+import com.stase.dtos.game.rawg.ListGameRawgDto;
 
 public record RawgResponse(
         int count,

@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
-import com.stase.dtos.game.ListGameRawgDto;
+import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.dtos.response.RawgResponse;
 
 import jakarta.annotation.PostConstruct;
