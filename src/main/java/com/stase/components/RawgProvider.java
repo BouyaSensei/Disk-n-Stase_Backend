@@ -3,14 +3,18 @@ package com.stase.components;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
 import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.dtos.response.rawg.RawgResponse;
+import com.stase.exception.GameNotFoundException;
 
 import jakarta.annotation.PostConstruct;
 
@@ -29,15 +33,6 @@ public class RawgProvider implements GameProvider {
     @Override
     public List<ListGameRawgDto> fetchAllGames() {
         // faire la function fetch en se basant sur le DTO et l'api rawg
-        /*
-         * GameRawgDto games = restClient.get().uri(uri ->
-         * uri.uri(config.getRawgApiKey()).path("/games")
-         * .queryParam("key", config.getRawgApiKey())
-         * .queryParam("count", 10))
-         * .retrieve()
-         * .body(GameRawgDto.class);
-         * return games != null ? games.getResults() : List.of();
-         */
 
         URI urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games").queryParam("key",
                 config.getRawgApiKey()).encode().build().toUri();
@@ -49,13 +44,19 @@ public class RawgProvider implements GameProvider {
 
     @Override
     public GameRawgDto gameDetail(Long id) {
-        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games/" + id)
+        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games/{id}")
                 .queryParam("key",
                         config.getRawgApiKey())
-                .encode().build().toString();
-        GameRawgDto game = restClient.get().uri(urlCleaner).retrieve().body(GameRawgDto.class);
+                .encode().build(id).toString();
+        // logique de retour du jeu
+        return restClient.get().uri(urlCleaner).retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
+                    if (res.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                        throw new GameNotFoundException(id);
+                    }
+                    throw new RestClientException("Erreur inattendue Rawg : " + res.getStatusCode());
+                }).body(GameRawgDto.class);
 
-        return game;
     }
 
     public String uriTest() {
