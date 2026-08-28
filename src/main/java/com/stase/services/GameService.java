@@ -1,6 +1,8 @@
 package com.stase.services;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,9 @@ public class GameService {
         List<Game> localGames = gameRepository.findAll();
         List<ListGameRawgDto> remoteGames = rawgProvider.fetchAllGames();
 
+        // corriger cet variable et trouver le moyen de transformer la list du repo en
+        // dto
+        Set<Long> localIds = localGames.stream().map(GameRawgDto::id).collect(Collector.toSet());
     }
 
     public GameRawgDto getGame(Long id) {
