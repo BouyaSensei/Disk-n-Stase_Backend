@@ -10,7 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.stase.components.configurations.RawgConfiguration;
 import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
-import com.stase.dtos.response.RawgResponse;
+import com.stase.dtos.response.rawg.RawgResponse;
 
 import jakarta.annotation.PostConstruct;
 
@@ -48,16 +48,21 @@ public class RawgProvider implements GameProvider {
     }
 
     @Override
-    GameRawgDto gameDetail(Long id) {
-        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games").queryParam("key",
-                config.getRawgApiKey()).queryParam("id", id).encode().build().toString();
-        RawgResponse response = restClient.get().uri(urlCleaner).retrieve().body(RawgResponse.class);
+    public GameRawgDto gameDetail(Long id) {
+        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games/" + id)
+                .queryParam("key",
+                        config.getRawgApiKey())
+                .encode().build().toString();
+        GameRawgDto game = restClient.get().uri(urlCleaner).retrieve().body(GameRawgDto.class);
 
+        return game;
     }
 
     public String uriTest() {
-        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games").queryParam("key",
-                config.getRawgApiKey()).encode().build().toString();
+        String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games" + "/3194")
+                .queryParam("key",
+                        config.getRawgApiKey())
+                .encode().build().toString();
         return urlCleaner;
     };
 
@@ -71,7 +76,7 @@ public class RawgProvider implements GameProvider {
         // Attention : si l'API est offline, ton app crash au démarrage à cause de ça.
         // Mais pour le debug, c'est ok.
         try {
-            System.out.println("Test API RAWG : " + fetchAllGames());
+            System.out.println("Test API RAWG : " + gameDetail(3478L));
         } catch (Exception e) {
             System.err.println("Erreur lors du debug @PostConstruct : " + e.getMessage());
             System.err.println("Erreur lors du debug @PostConstruct avec l'uri : " + uriTest());
