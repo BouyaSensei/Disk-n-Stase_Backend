@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.stase.components.RawgProvider;
 import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.entities.Game;
@@ -12,9 +13,11 @@ import com.stase.repositories.GameRepository;
 @Service
 public class GameService {
     private GameRepository gameRepository;
+    private RawgProvider rawgProvider;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, RawgProvider rawgProvider) {
         this.gameRepository = gameRepository;
+        this.rawgProvider = rawgProvider;
     }
 
     public GameRawgDto convertToDto(Game game) {
@@ -25,10 +28,12 @@ public class GameService {
     }
 
     public List<ListGameRawgDto> GetAllGames() {
+        List<Game> localGames = gameRepository.findAll();
+        List<ListGameRawgDto> remoteGames = rawgProvider.fetchAllGames();
 
     }
 
-    public GameRawgDto getGame() {
+    public GameRawgDto getGame(Long id) {
 
     }
 

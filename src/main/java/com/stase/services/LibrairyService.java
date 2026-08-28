@@ -12,4 +12,7 @@ public class LibrairyService {
         this.librairyRepository = librairyRepository;
     }
 
+    public void getLibrairy() {
+
+    }
 }
