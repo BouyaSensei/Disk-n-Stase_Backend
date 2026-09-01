@@ -1,7 +1,9 @@
+package com.stase.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,20 @@ public class GameService {
     public GameService(GameRepository gameRepository, RawgProvider rawgProvider) {
         this.gameRepository = gameRepository;
         this.rawgProvider = rawgProvider;
+    }
+
+    public String dtoEmbasement(GameRawgDto dto) {
+        Game gameConvert = new Game();
+        gameConvert.setId(dto.id());
+        gameConvert.setName(dto.name());
+        gameConvert.setDescription(dto.description());
+        gameConvert.setGenre(dto.genres());
+        try {
+            return gameToJson(dto);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("erreur lors de la conversion en json du jeu");
+        }
+
     }
 
     public List<String> converToList(List<GenreRawgDto> list) throws JsonProcessingException {
@@ -83,6 +99,11 @@ public class GameService {
         return mapper.writeValueAsString(games);
     }
 
+    public String gameToJson(GameRawgDto game) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(game);
+    }
+
     public String getAllGames() {
 
         List<Game> localGames = gameRepository.findAll();
@@ -114,8 +135,39 @@ public class GameService {
 
     }
 
-    public GameRawgDto getGame(Long id) {
+    public String getGame(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("L'id ne peut pas être null");
+        }
+        Optional<Game> optionnalGame = gameRepository.findById(id);
+        if (optionnalGame.isPresent()) {
+            Game findGame = optionnalGame.get();
+            try {
+                GameRawgDto gameDto = convertToDto(findGame);
+                return gameToJson(gameDto);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("erreur lors de la conversation du jeu en json", e);
+            }
 
+        } else {
+            try {
+                GameRawgDto remoteGame = rawgProvider.gameDetail(id);
+                // embasement
+                return dtoEmbasement(remoteGame);
+
+            } catch (Exception e) {
+                throw new RuntimeException("erreur de la recup du jeu sur le rawg", e);
+            }
+
+        }
+
+        // on recupere le jeu par id sur la db et si il n'existe verifier sur la remote
+        // et ensuite le creer
+
+        // on fait ensuite la convertion du dto en list et si local de l'entity au dto
+        // ect
+
+        // et on return
     }
 
     // faire la logique de fetching içi et créé un compoentn pour faire la couche de
