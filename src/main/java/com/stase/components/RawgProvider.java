@@ -78,6 +78,7 @@ public class RawgProvider implements GameProvider {
         // Mais pour le debug, c'est ok.
         try {
             System.out.println("Test API RAWG : " + gameDetail(3478L));
+            System.out.println("la taille de la liste : " + fetchAllGames().size());
         } catch (Exception e) {
             System.err.println("Erreur lors du debug @PostConstruct : " + e.getMessage());
             System.err.println("Erreur lors du debug @PostConstruct avec l'uri : " + uriTest());
