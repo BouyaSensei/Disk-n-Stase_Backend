@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +55,6 @@ public class GameService {
         gameFresh.setDescription(dto.description());
         return gameFresh;
 
-        // return new Game(Game.setId(gameDto.id()));
     }
 
     public List<Game> convertToListGame(List<ListGameRawgDto> dto) {
@@ -92,15 +92,24 @@ public class GameService {
         // dto
         if (localGames.isEmpty()) {
             // List<Game> gameToAdd =
-            remoteGames.stream().map(this::converToGame).toList();
-            return listToJson(remoteGames);
+            try {
+                remoteGames.stream().map(this::converToGame).toList();
+                return listToJson(remoteGames);
+            } catch (IOException e) {
+                throw new RuntimeException("erreur lors de la lecture de la liste de jeux à distance", e);
+            }
 
         } else {
             Set<Long> localIds = localGames.stream().map(this::convertToDto).map(GameRawgDto::id)
                     .collect(Collectors.toSet());
-            List<ListGameRawgDto> newGames = remoteGames.stream().filter(game -> !localIds.contains(game.id()))
-                    .collect(Collectors.toList());
-            return listToJson(newGames);
+            try {
+                List<ListGameRawgDto> newGames = remoteGames.stream().filter(game -> !localIds.contains(game.id()))
+                        .collect(Collectors.toList());
+                return listToJson(newGames);
+            } catch (IOException e) {
+                throw new RuntimeException("erreur lors de la creation des jeux en db", e);
+            }
+
         }
 
     }
