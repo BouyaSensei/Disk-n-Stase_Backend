@@ -156,7 +156,14 @@ public class GameService {
         } else {
             try {
                 ObjectMapper mapper = new ObjectMapper();
+
                 JsonNode node = mapper.readTree(rawgProvider.gameDetail(id));
+                Game newGame = new Game();
+                newGame.setId(node.get("id").asLong());
+                newGame.setName(node.get("name").asText());
+                newGame.setDescription(node.get("description").asText());
+                newGame.setCoverImageUrl(node.get("background_image").asText());
+                newGame.setPlatforms(node.get("platforms").asText());
                 return rawgProvider.gameDetail(id);
                 // GameRawgDto remoteGame = ;
                 // embasement

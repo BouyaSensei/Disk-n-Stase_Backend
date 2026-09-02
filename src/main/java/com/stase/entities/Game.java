@@ -33,6 +33,7 @@ public class Game {
     @Column(name = "language")
     private List<String> languages;
     private String coverImageUrl;
+    private String platforms;
 
     public Game() {
     }
@@ -43,14 +44,14 @@ public class Game {
 
     public Game(String name, String description, List<String> genre, Boolean isPhysical, List<String> languages,
 
-            String coverImageUrl) {
+            String coverImageUrl, String platforms) {
         this.name = name;
         this.description = description;
         this.genre = genre;
         this.isPhysical = isPhysical;
         this.languages = languages;
         this.coverImageUrl = coverImageUrl;
-
+        this.platforms = platforms;
     }
 
     public Long getId() {
@@ -112,5 +113,13 @@ public class Game {
 
     public String getCoverImageUrl() {
         return coverImageUrl;
+    }
+
+    public String getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(String platforms) {
+        this.platforms = platforms;
     }
 }
