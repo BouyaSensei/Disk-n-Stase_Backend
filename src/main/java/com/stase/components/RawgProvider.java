@@ -11,7 +11,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stase.components.configurations.RawgConfiguration;
-import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.dtos.response.rawg.RawgResponse;
 import com.stase.exception.GameNotFoundException;
@@ -43,7 +42,7 @@ public class RawgProvider implements GameProvider {
     }
 
     @Override
-    public GameRawgDto gameDetail(Long id) {
+    public String gameDetail(Long id) {
         String urlCleaner = UriComponentsBuilder.fromUriString(config.getRawgUrl() + "/games/{id}")
                 .queryParam("key",
                         config.getRawgApiKey())
@@ -55,7 +54,7 @@ public class RawgProvider implements GameProvider {
                         throw new GameNotFoundException(id);
                     }
                     throw new RestClientException("Erreur inattendue Rawg : " + res.getStatusCode());
-                }).body(GameRawgDto.class);
+                }).body(String.class);
 
     }
 

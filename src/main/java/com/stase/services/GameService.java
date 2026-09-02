@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stase.components.RawgProvider;
 import com.stase.dtos.game.rawg.GameRawgDto;
@@ -29,11 +30,13 @@ public class GameService {
     }
 
     public String dtoEmbasement(GameRawgDto dto) {
+
         Game gameConvert = new Game();
+
         gameConvert.setId(dto.id());
         gameConvert.setName(dto.name());
         gameConvert.setDescription(dto.description());
-        gameConvert.setGenre(dto.genres());
+        // gameConvert.setGenre(dto.genres());
         try {
             return gameToJson(dto);
         } catch (JsonProcessingException e) {
@@ -114,6 +117,7 @@ public class GameService {
         if (localGames.isEmpty()) {
             // List<Game> gameToAdd =
             try {
+                // faire l'embasement de la db ici
                 remoteGames.stream().map(this::converToGame).toList();
                 return listToJson(remoteGames);
             } catch (IOException e) {
@@ -151,9 +155,13 @@ public class GameService {
 
         } else {
             try {
-                GameRawgDto remoteGame = rawgProvider.gameDetail(id);
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(rawgProvider.gameDetail(id));
+                return rawgProvider.gameDetail(id);
+                // GameRawgDto remoteGame = ;
                 // embasement
-                return dtoEmbasement(remoteGame);
+                //
+                // return dtoEmbasement(remoteGame);
 
             } catch (Exception e) {
                 throw new RuntimeException("erreur de la recup du jeu sur le rawg", e);
