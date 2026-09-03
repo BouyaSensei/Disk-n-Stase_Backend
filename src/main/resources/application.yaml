@@ -22,7 +22,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
+
     open-in-view: false
     show-sql: false
     properties:

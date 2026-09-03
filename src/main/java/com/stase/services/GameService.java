@@ -17,6 +17,7 @@ import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.GenreRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.entities.Game;
+import com.stase.exception.GameNotFoundException;
 import com.stase.repositories.GameRepository;
 
 @Service
@@ -139,11 +140,17 @@ public class GameService {
 
     }
 
-    public String getGame(Long id) {
+    public String getGame(Long id, boolean remote) {
         if (id == null) {
             throw new IllegalArgumentException("L'id ne peut pas être null");
         }
-        Optional<Game> optionnalGame = gameRepository.findById(id);
+        Optional<Game> optionnalGame;
+        if (remote) {
+            optionnalGame = gameRepository.findByRawgId(id);
+        } else {
+            optionnalGame = gameRepository.findById(id);
+        }
+
         if (optionnalGame.isPresent()) {
             Game findGame = optionnalGame.get();
             try {
@@ -154,16 +161,21 @@ public class GameService {
             }
 
         } else {
+            if (!remote) {
+                throw new GameNotFoundException(id);
+            }
             try {
-                ObjectMapper mapper = new ObjectMapper();
 
+                ObjectMapper mapper = new ObjectMapper();
+                // il faut trouver une façon de faire un id sur ou un nom pour faire la
+                // recherche en remote;
                 JsonNode node = mapper.readTree(rawgProvider.gameDetail(id));
                 Game newGame = new Game();
-                newGame.setId(node.get("id").asLong());
                 newGame.setName(node.get("name").asText());
                 newGame.setDescription(node.get("description").asText());
                 newGame.setCoverImageUrl(node.get("background_image").asText());
                 newGame.setPlatforms(node.get("platforms").asText());
+                gameRepository.save(newGame);
                 return rawgProvider.gameDetail(id);
                 // GameRawgDto remoteGame = ;
                 // embasement

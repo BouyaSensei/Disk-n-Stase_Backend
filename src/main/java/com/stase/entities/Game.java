@@ -25,6 +25,7 @@ public class Game {
     private Long id;
     @Column(unique = true, nullable = false)
     private String name;
+    @Column(columnDefinition = "TEXT", length = -1)
     private String description;
     private List<String> genre;
     private Boolean isPhysical;
@@ -32,8 +33,12 @@ public class Game {
     @CollectionTable(name = "game_languages", joinColumns = @JoinColumn(name = "game_id"))
     @Column(name = "language")
     private List<String> languages;
+    @Column(length = 512)
     private String coverImageUrl;
+    @Column(columnDefinition = "TEXT", length = 500)
     private String platforms;
+    @Column(unique = true)
+    private Long rawgId;
 
     public Game() {
     }
@@ -44,7 +49,7 @@ public class Game {
 
     public Game(String name, String description, List<String> genre, Boolean isPhysical, List<String> languages,
 
-            String coverImageUrl, String platforms) {
+            String coverImageUrl, String platforms, Long rawgId) {
         this.name = name;
         this.description = description;
         this.genre = genre;
@@ -52,6 +57,7 @@ public class Game {
         this.languages = languages;
         this.coverImageUrl = coverImageUrl;
         this.platforms = platforms;
+        this.rawgId = rawgId;
     }
 
     public Long getId() {
@@ -121,5 +127,13 @@ public class Game {
 
     public void setPlatforms(String platforms) {
         this.platforms = platforms;
+    }
+
+    public Long getRawgId() {
+        return rawgId;
+    }
+
+    public void setRawgId(Long id) {
+        this.rawgId = id;
     }
 }
