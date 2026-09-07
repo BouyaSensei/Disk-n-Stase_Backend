@@ -64,7 +64,7 @@ public class GameService {
     public GameRawgDto convertToDto(Game game) {
 
         return new GameRawgDto(game.getId(), game.getName(), game.getDescription(), game.getGenre(),
-                game.getIsPhysical(), game.getCoverImageUrl());
+                game.getIsPhysical(), game.getPlatforms(), game.getCoverImageUrl());
 
     }
 
@@ -165,7 +165,6 @@ public class GameService {
                 throw new GameNotFoundException(id);
             }
             try {
-
                 ObjectMapper mapper = new ObjectMapper();
                 // il faut trouver une façon de faire un id sur ou un nom pour faire la
                 // recherche en remote;
@@ -174,9 +173,12 @@ public class GameService {
                 newGame.setName(node.get("name").asText());
                 newGame.setDescription(node.get("description").asText());
                 newGame.setCoverImageUrl(node.get("background_image").asText());
-                newGame.setPlatforms(node.get("platforms").asText());
+                newGame.setPlatforms(mapper.writeValueAsString(node.get("platforms")));
+                newGame.setRawgId(id);
                 gameRepository.save(newGame);
-                return rawgProvider.gameDetail(id);
+                // retourner le localid avec l'objet
+                // return rawgProvider.gameDetail(id);
+                return gameToJson(convertToDto(newGame));
                 // GameRawgDto remoteGame = ;
                 // embasement
                 //
