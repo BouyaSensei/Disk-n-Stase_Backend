@@ -1,14 +1,5 @@
 package com.stase.services;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,19 +10,29 @@ import com.stase.dtos.game.rawg.ListGameRawgDto;
 import com.stase.entities.Game;
 import com.stase.exception.GameNotFoundException;
 import com.stase.repositories.GameRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
+
     private final GameRepository gameRepository;
     private final RawgProvider rawgProvider;
 
-    public GameService(GameRepository gameRepository, RawgProvider rawgProvider) {
+    public GameService(
+        GameRepository gameRepository,
+        RawgProvider rawgProvider
+    ) {
         this.gameRepository = gameRepository;
         this.rawgProvider = rawgProvider;
     }
 
     public String dtoEmbasement(GameRawgDto dto) {
-
         Game gameConvert = new Game();
 
         gameConvert.setId(dto.id());
@@ -41,31 +42,36 @@ public class GameService {
         try {
             return gameToJson(dto);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("erreur lors de la conversion en json du jeu");
+            throw new IllegalStateException(
+                "erreur lors de la conversion en json du jeu"
+            );
         }
-
     }
 
-    public List<String> converToList(List<GenreRawgDto> list) throws JsonProcessingException {
+    public List<String> converToList(List<GenreRawgDto> list)
+        throws JsonProcessingException {
         List<String> listConverter = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         for (GenreRawgDto genre : list) {
             try {
-
                 listConverter.add(mapper.writeValueAsString(genre));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Erreur conversion JSON", e);
             }
-
         }
         return listConverter;
     }
 
     public GameRawgDto convertToDto(Game game) {
-
-        return new GameRawgDto(game.getId(), game.getName(), game.getDescription(), game.getGenre(),
-                game.getIsPhysical(), game.getPlatforms(), game.getCoverImageUrl());
-
+        return new GameRawgDto(
+            game.getId(),
+            game.getName(),
+            game.getDescription(),
+            game.getGenre(),
+            game.getIsPhysical(),
+            game.getPlatforms(),
+            game.getCoverImageUrl()
+        );
     }
 
     public Game converToGame(ListGameRawgDto dto) {
@@ -74,13 +80,11 @@ public class GameService {
         gameFresh.setName(dto.name());
         gameFresh.setDescription(dto.description());
         return gameFresh;
-
     }
 
     public List<Game> convertToListGame(List<ListGameRawgDto> dto) {
         List<Game> convertGames = new ArrayList<>();
         for (ListGameRawgDto game : dto) {
-
             Game gameConvert = new Game();
             gameConvert.setId(game.id());
             gameConvert.setName(game.name());
@@ -92,13 +96,12 @@ public class GameService {
                 throw new RuntimeException("Erreur conversion JSON", e);
             }
             convertGames.add(gameConvert);
-
         }
         return convertGames;
     }
 
-    public String listToJson(List<ListGameRawgDto> games) throws JsonProcessingException {
-
+    public String listToJson(List<ListGameRawgDto> games)
+        throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(games);
     }
@@ -108,10 +111,10 @@ public class GameService {
         return mapper.writeValueAsString(game);
     }
 
-    public String getAllGames() {
-
+    public String getAllGames(Long page) {
         List<Game> localGames = gameRepository.findAll();
-        List<ListGameRawgDto> remoteGames = rawgProvider.fetchAllGames();
+
+        List<ListGameRawgDto> remoteGames = rawgProvider.fetchAllGames(page);
 
         // corriger cet variable et trouver le moyen de transformer la list du repo en
         // dto
@@ -122,22 +125,30 @@ public class GameService {
                 remoteGames.stream().map(this::converToGame).toList();
                 return listToJson(remoteGames);
             } catch (IOException e) {
-                throw new RuntimeException("erreur lors de la lecture de la liste de jeux à distance", e);
+                throw new RuntimeException(
+                    "erreur lors de la lecture de la liste de jeux à distance",
+                    e
+                );
             }
-
         } else {
-            Set<Long> localIds = localGames.stream().map(this::convertToDto).map(GameRawgDto::id)
-                    .collect(Collectors.toSet());
+            Set<Long> localIds = localGames
+                .stream()
+                .map(this::convertToDto)
+                .map(GameRawgDto::id)
+                .collect(Collectors.toSet());
             try {
-                List<ListGameRawgDto> newGames = remoteGames.stream().filter(game -> !localIds.contains(game.id()))
-                        .collect(Collectors.toList());
+                List<ListGameRawgDto> newGames = remoteGames
+                    .stream()
+                    .filter(game -> !localIds.contains(game.id()))
+                    .collect(Collectors.toList());
                 return listToJson(newGames);
             } catch (IOException e) {
-                throw new RuntimeException("erreur lors de la creation des jeux en db", e);
+                throw new RuntimeException(
+                    "erreur lors de la creation des jeux en db",
+                    e
+                );
             }
-
         }
-
     }
 
     public String getGame(Long id, boolean remote) {
@@ -157,9 +168,11 @@ public class GameService {
                 GameRawgDto gameDto = convertToDto(findGame);
                 return gameToJson(gameDto);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("erreur lors de la conversation du jeu en json", e);
+                throw new RuntimeException(
+                    "erreur lors de la conversation du jeu en json",
+                    e
+                );
             }
-
         } else {
             if (!remote) {
                 throw new GameNotFoundException(id);
@@ -173,7 +186,9 @@ public class GameService {
                 newGame.setName(node.get("name").asText());
                 newGame.setDescription(node.get("description").asText());
                 newGame.setCoverImageUrl(node.get("background_image").asText());
-                newGame.setPlatforms(mapper.writeValueAsString(node.get("platforms")));
+                newGame.setPlatforms(
+                    mapper.writeValueAsString(node.get("platforms"))
+                );
                 newGame.setRawgId(id);
                 gameRepository.save(newGame);
                 // retourner le localid avec l'objet
@@ -183,11 +198,12 @@ public class GameService {
                 // embasement
                 //
                 // return dtoEmbasement(remoteGame);
-
             } catch (Exception e) {
-                throw new RuntimeException("erreur de la recup du jeu sur le rawg", e);
+                throw new RuntimeException(
+                    "erreur de la recup du jeu sur le rawg",
+                    e
+                );
             }
-
         }
 
         // on recupere le jeu par id sur la db et si il n'existe verifier sur la remote
@@ -198,7 +214,4 @@ public class GameService {
 
         // et on return
     }
-
-    // faire la logique de fetching içi et créé un compoentn pour faire la couche de
-    // creation de http pour garder la logique metier clean
 }

@@ -1,4 +1,8 @@
 spring:
+  security:
+    user:
+      name: admin
+      password: test123
   application:
     name: stase
 
