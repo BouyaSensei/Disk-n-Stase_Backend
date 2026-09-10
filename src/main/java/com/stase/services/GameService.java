@@ -13,6 +13,7 @@ import com.stase.repositories.GameRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,7 +77,7 @@ public class GameService {
 
     public Game converToGame(ListGameRawgDto dto) {
         Game gameFresh = new Game();
-        gameFresh.setId(dto.id());
+        gameFresh.setRawgId(dto.id());
         gameFresh.setName(dto.name());
         gameFresh.setDescription(dto.description());
         return gameFresh;
@@ -122,7 +123,7 @@ public class GameService {
             // List<Game> gameToAdd =
             try {
                 // faire l'embasement de la db ici
-                remoteGames.stream().map(this::converToGame).toList();
+                remoteGames.forEach(game -> getGame(game.id(), true));
                 return listToJson(remoteGames);
             } catch (IOException e) {
                 throw new RuntimeException(
@@ -131,16 +132,21 @@ public class GameService {
                 );
             }
         } else {
-            Set<Long> localIds = localGames
+            // les ids locaux à comparer sont les rawgId, pas les ids auto-générés
+            Set<Long> localRawgIds = localGames
                 .stream()
-                .map(this::convertToDto)
-                .map(GameRawgDto::id)
+                .map(Game::getRawgId)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+            List<ListGameRawgDto> newGames = remoteGames
+                .stream()
+                .filter(game -> !localRawgIds.contains(game.id()))
+                .toList();
+            // getGame s'occupe de l'embase de chaque jeu manquant
+            for (ListGameRawgDto game : newGames) {
+                getGame(game.id(), true);
+            }
             try {
-                List<ListGameRawgDto> newGames = remoteGames
-                    .stream()
-                    .filter(game -> !localIds.contains(game.id()))
-                    .collect(Collectors.toList());
                 return listToJson(newGames);
             } catch (IOException e) {
                 throw new RuntimeException(
