@@ -12,21 +12,28 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Utilisateur")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
+    // unique cote base : dernier filet contre les doublons, meme en cas de concurrence
+    @Column(nullable = false, unique = true, length = 64)
     private String username;
-    @Column(nullable = false)
+
+    // stocke le hash BCrypt du mot de passe, jamais le mot de passe en clair
+    @Column(nullable = false, length = 100)
     private String password;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true, length = 255)
     private String email;
+
+    // chaque utilisateur possede sa propre librairie, attribuee personnellement a la creation
     @OneToOne
     @JoinColumn(name = "librairy_entry_id")
     private LibrairyEntry librairyEntry;
 
-    public User() {
-    };
+    public User() {}
 
     public User(String username, String password, String email) {
         this.username = username;
@@ -38,12 +45,20 @@ public class User {
         return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
         return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -56,5 +71,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LibrairyEntry getLibrairyEntry() {
+        return this.librairyEntry;
+    }
+
+    public void setLibrairyEntry(LibrairyEntry librairyEntry) {
+        this.librairyEntry = librairyEntry;
     }
 }
