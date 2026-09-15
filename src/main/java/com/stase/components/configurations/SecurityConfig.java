@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -60,7 +61,14 @@ public class SecurityConfig {
             .headers(h -> h.frameOptions(f -> f.deny()))
             .authorizeHttpRequests(auth ->
                 auth
-                    // le CRUD utilisateur est protege : authentification obligatoire
+                    // lecture utilisateur (GET) : accessible sans authentification
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/users",
+                        "/api/users/**"
+                    )
+                    .permitAll()
+                    // ecriture utilisateur (POST/PUT/DELETE) : authentification obligatoire
                     .requestMatchers("/api/users/**")
                     .authenticated()
                     .requestMatchers("/api/games")
