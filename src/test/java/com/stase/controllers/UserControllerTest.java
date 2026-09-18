@@ -1,6 +1,7 @@
 package com.stase.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import com.stase.dtos.librairy.LibrairyDto;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -22,6 +25,9 @@ class UserControllerTest {
     private UserService userService;
 
     private UserController userController;
+    private static final Logger log = LoggerFactory.getLogger(
+        UserControllerTest.class
+    );
 
     @BeforeEach
     void setUp() {
@@ -71,5 +77,22 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserTest() {}
+    void createUserTest() {
+        UserCreateDto user1 = new UserCreateDto(
+            "testos1",
+            "test4587",
+            "test@hotmail.fr"
+        );
+        when(userService.createUser(user1)).thenReturn(
+            new UserDto(1L, "testos1", "test@hotmail.fr", new LibrairyDto(1L))
+        );
+        // Il faut appeler la méthode pour la tester !
+        UserDto user = userController.createUser(user1);
+
+        assertNotEquals(null, user);
+
+        assertEquals(1L, user.id());
+        assertEquals("testos1", user.username());
+        assertEquals("test@hotmail.fr", user.email());
+    }
 }
