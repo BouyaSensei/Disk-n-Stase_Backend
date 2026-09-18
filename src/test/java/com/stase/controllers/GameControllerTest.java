@@ -1,9 +1,11 @@
 package com.stase.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.stase.exception.GameNotFoundException;
 import com.stase.services.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,11 +68,46 @@ class GameControllerTest {
 
     @Test
     void getGameDetailDoitDeleguerAvecRemoteATrue() {
-        when(gameService.getGame(42L, true)).thenReturn("{\"id\":42,\"name\":\"Game C\"}");
+        when(gameService.getGame(42L, true)).thenReturn(
+            "{\"id\":42,\"name\":\"Game C\"}"
+        );
 
         String result = controller.getGameDetail(42L);
 
         assertEquals("{\"id\":42,\"name\":\"Game C\"}", result);
         verify(gameService).getGame(42L, true);
+    }
+
+    // --- Tests des cas d'echec : les exceptions du service doivent remonter telles quelles
+    // (GlobalExceptionHandler les convertit ensuite en reponses HTTP) ---
+
+    @Test
+    void getGameDetailJeuIntrouvableDoitLancerGameNotFoundException() {
+        when(gameService.getGame(42L, true)).thenThrow(
+            new GameNotFoundException(42L)
+        );
+
+        GameNotFoundException ex = assertThrows(
+            GameNotFoundException.class,
+            () -> controller.getGameDetail(42L)
+        );
+        assertEquals("Jeu introuvable en local avec l'id :42", ex.getMessage());
+    }
+
+    @Test
+    void getAllGamesErreurApiDistanteDoitPropagerRuntimeException() {
+        when(gameService.getAllGames(1L)).thenThrow(
+            new RuntimeException(
+                "erreur lors de la lecture de la liste de jeux a distance"
+            )
+        );
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () ->
+            controller.getAllGames(null)
+        );
+        assertEquals(
+            "erreur lors de la lecture de la liste de jeux a distance",
+            ex.getMessage()
+        );
     }
 }
