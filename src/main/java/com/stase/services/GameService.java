@@ -7,8 +7,10 @@ import com.stase.components.RawgProvider;
 import com.stase.dtos.game.rawg.GameRawgDto;
 import com.stase.dtos.game.rawg.GenreRawgDto;
 import com.stase.dtos.game.rawg.ListGameRawgDto;
+import com.stase.entities.Check_physique;
 import com.stase.entities.Game;
 import com.stase.exception.GameNotFoundException;
+import com.stase.repositories.GameFilterRepository;
 import com.stase.repositories.GameRepository;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,13 +26,16 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final RawgProvider rawgProvider;
+    private final GameFilterRepository gameFilterRepository;
 
     public GameService(
         GameRepository gameRepository,
-        RawgProvider rawgProvider
+        RawgProvider rawgProvider,
+        GameFilterRepository gameFilterRepository
     ) {
         this.gameRepository = gameRepository;
         this.rawgProvider = rawgProvider;
+        this.gameFilterRepository = gameFilterRepository;
     }
 
     public String dtoEmbasement(GameRawgDto dto) {
@@ -219,5 +224,44 @@ public class GameService {
         // ect
 
         // et on return
+    }
+
+    public int applyPhysical() {
+        List<Check_physique> physicalList = gameFilterRepository.findAll();
+        List<Game> localGames = gameRepository.findAll();
+
+        if (localGames.isEmpty()) {
+            // aucun jeu en base, rien à mettre à jour
+            return 404;
+        }
+
+        List<Game> gameApply = new ArrayList<>();
+        for (Game game : localGames) {
+            for (Check_physique check_physique : physicalList) {
+                if (
+                    Objects.equals(
+                        check_physique.getGame_title().trim().toLowerCase(),
+                        game.getName().trim().toLowerCase()
+                    )
+                ) {
+                    game.setIsPhysical(true);
+                    gameApply.add(game);
+                    break;
+                }
+            }
+        }
+
+        if (gameApply.isEmpty()) {
+            // aucun titre de la liste physique ne correspond à un jeu local
+            return 404;
+        }
+
+        try {
+            gameRepository.saveAll(gameApply);
+        } catch (Exception e) {
+            // l'update en base a échoué
+            return 500;
+        }
+        return 200;
     }
 }
